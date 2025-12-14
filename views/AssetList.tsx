@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Plus, 
   Download, 
@@ -19,10 +19,18 @@ const assetsData: Asset[] = [
 
 interface AssetListProps {
   onSelectAsset: (asset: Asset) => void;
+  externalSearchTerm?: string;
 }
 
-export const AssetList: React.FC<AssetListProps> = ({ onSelectAsset }) => {
+export const AssetList: React.FC<AssetListProps> = ({ onSelectAsset, externalSearchTerm }) => {
   const [searchTerm, setSearchTerm] = useState('');
+
+  // Update local search term if the external one changes (e.g., from global header search)
+  useEffect(() => {
+    if (externalSearchTerm !== undefined) {
+      setSearchTerm(externalSearchTerm);
+    }
+  }, [externalSearchTerm]);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
