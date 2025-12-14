@@ -22,13 +22,21 @@ interface LayoutProps {
   currentView: ViewState;
   onNavigate: (view: ViewState) => void;
   onLogout: () => void;
+  onSearch: (term: string) => void;
 }
 
-export const Layout: React.FC<LayoutProps> = ({ children, currentView, onNavigate, onLogout }) => {
+export const Layout: React.FC<LayoutProps> = ({ children, currentView, onNavigate, onLogout, onSearch }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMovementsOpen, setIsMovementsOpen] = useState(false);
+  const [searchInput, setSearchInput] = useState('');
 
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
+
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      onSearch(searchInput);
+    }
+  };
 
   const navItemClass = (view: ViewState) => `
     flex items-center px-6 py-3 text-gray-300 hover:bg-blue-800 hover:text-white transition-colors cursor-pointer
@@ -131,6 +139,9 @@ export const Layout: React.FC<LayoutProps> = ({ children, currentView, onNavigat
             <div className="hidden md:flex ml-4 relative w-96">
               <input 
                 type="text" 
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                onKeyDown={handleSearchKeyDown}
                 placeholder="Buscar por código, serie o nombre..." 
                 className="w-full pl-10 pr-4 py-2 bg-gray-100 border-none rounded-full focus:ring-2 focus:ring-[#D32F2F] focus:bg-white transition-all text-sm"
               />
