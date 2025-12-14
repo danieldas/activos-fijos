@@ -1,0 +1,7 @@
+{
+  "name": "UMSS Activos Fijos",
+  "description": "Sistema de Gestión de Activos Fijos para la Universidad Mayor de San Simón (UMSS).",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
