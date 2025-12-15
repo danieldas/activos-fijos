@@ -5,17 +5,11 @@ import {
   Printer, 
   Eye, 
   Edit,
-  Search
+  Search,
+  X
 } from 'lucide-react';
-import { Asset } from '../types';
-
-const assetsData: Asset[] = [
-  { id: '1', code: 'UMSS-00123', name: 'Proyector Epson X41', brand: 'Epson', model: 'X41', series: 'SN-9982', location: 'Aula 402', responsible: 'Juan Pérez', status: 'Bueno' },
-  { id: '2', code: 'UMSS-00124', name: 'Silla Ejecutiva', brand: 'Muebles Bo', model: 'Ergo', series: 'N/A', location: 'Secretaría', responsible: 'Ana García', status: 'Regular' },
-  { id: '3', code: 'UMSS-00125', name: 'Laptop Dell Inspiron', brand: 'Dell', model: '5510', series: 'DLL-3321', location: 'Lab. Comp 1', responsible: 'Carlos Admin', status: 'Malo' },
-  { id: '4', code: 'UMSS-00126', name: 'Pizarra Acrílica', brand: 'Generico', model: '2x1m', series: 'N/A', location: 'Aula 201', responsible: 'Roberto M.', status: 'Bueno' },
-  { id: '5', code: 'UMSS-00127', name: 'Microscopio Zeiss', brand: 'Zeiss', model: 'Primo Star', series: 'ZS-112', location: 'Lab. Bio', responsible: 'Dra. López', status: 'Bueno' },
-];
+import { Asset, AssetStatus } from '../types';
+import { useData } from '../context/DataContext';
 
 interface AssetListProps {
   onSelectAsset: (asset: Asset) => void;
@@ -23,9 +17,15 @@ interface AssetListProps {
 }
 
 export const AssetList: React.FC<AssetListProps> = ({ onSelectAsset, externalSearchTerm }) => {
+  const { assets, addAsset } = useData();
   const [searchTerm, setSearchTerm] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  
+  // Form State
+  const [newAsset, setNewAsset] = useState<Partial<Asset>>({
+    status: 'Bueno'
+  });
 
-  // Update local search term if the external one changes (e.g., from global header search)
   useEffect(() => {
     if (externalSearchTerm !== undefined) {
       setSearchTerm(externalSearchTerm);
@@ -41,20 +41,60 @@ export const AssetList: React.FC<AssetListProps> = ({ onSelectAsset, externalSea
     }
   };
 
-  const filteredAssets = assetsData.filter(asset => 
+  const filteredAssets = assets.filter(asset => 
     asset.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
     asset.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleExport = () => {
+    const csvContent = "data:text/csv;charset=utf-8," 
+      + "Codigo,Nombre,Marca,Serie,Ubicacion,Responsable,Estado\n"
+      + assets.map(a => `${a.code},"${a.name}",${a.brand},${a.series},"${a.location}","${a.responsible}",${a.status}`).join("\n");
+    
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "inventario_activos.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newAsset.code && newAsset.name) {
+      const assetToAdd: Asset = {
+        id: Date.now().toString(),
+        code: newAsset.code || '',
+        name: newAsset.name || '',
+        brand: newAsset.brand || '',
+        model: newAsset.model || '',
+        series: newAsset.series || 'S/N',
+        location: newAsset.location || 'Sin asignar',
+        responsible: newAsset.responsible || 'Sin asignar',
+        status: newAsset.status as AssetStatus || 'Bueno'
+      };
+      addAsset(assetToAdd);
+      setIsModalOpen(false);
+      setNewAsset({ status: 'Bueno' });
+    }
+  };
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <h2 className="text-2xl font-bold text-gray-800">Inventario de Activos</h2>
         <div className="flex gap-2">
-          <button className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-md shadow-sm hover:bg-green-700 transition-colors">
+          <button 
+            onClick={() => setIsModalOpen(true)}
+            className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-md shadow-sm hover:bg-green-700 transition-colors"
+          >
             <Plus size={18} /> Nuevo Activo
           </button>
-          <button className="flex items-center gap-2 bg-gray-600 text-white px-4 py-2 rounded-md shadow-sm hover:bg-gray-700 transition-colors">
+          <button 
+            onClick={handleExport}
+            className="flex items-center gap-2 bg-gray-600 text-white px-4 py-2 rounded-md shadow-sm hover:bg-gray-700 transition-colors"
+          >
             <Download size={18} /> Exportar
           </button>
           <button className="flex items-center gap-2 bg-white text-gray-700 border border-gray-300 px-4 py-2 rounded-md shadow-sm hover:bg-gray-50 transition-colors">
@@ -129,17 +169,94 @@ export const AssetList: React.FC<AssetListProps> = ({ onSelectAsset, externalSea
           </table>
         </div>
         <div className="flex items-center justify-between p-4 border-t border-gray-200 bg-gray-50">
-          <span className="text-sm text-gray-700">Mostrando {filteredAssets.length} de {assetsData.length} entradas</span>
-          <div className="inline-flex mt-2 xs:mt-0">
-            <button className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-l hover:bg-gray-100 disabled:opacity-50">
-              Anterior
-            </button>
-            <button className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-r hover:bg-gray-100 disabled:opacity-50">
-              Siguiente
-            </button>
-          </div>
+          <span className="text-sm text-gray-700">Mostrando {filteredAssets.length} de {assets.length} entradas</span>
         </div>
       </div>
+
+      {/* NEW ASSET MODAL */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl overflow-hidden">
+            <div className="bg-[#0D47A1] p-4 flex justify-between items-center text-white">
+              <h3 className="font-bold text-lg">Registrar Nuevo Activo</h3>
+              <button onClick={() => setIsModalOpen(false)} className="hover:bg-blue-800 p-1 rounded">
+                <X size={20} />
+              </button>
+            </div>
+            
+            <form onSubmit={handleSubmit} className="p-6 space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Código *</label>
+                  <input 
+                    required
+                    type="text" 
+                    value={newAsset.code || ''} 
+                    onChange={e => setNewAsset({...newAsset, code: e.target.value})}
+                    className="w-full p-2 border rounded focus:ring-2 focus:ring-green-500 outline-none" 
+                    placeholder="Ej: UMSS-001"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Nombre / Descripción *</label>
+                  <input 
+                    required
+                    type="text" 
+                    value={newAsset.name || ''} 
+                    onChange={e => setNewAsset({...newAsset, name: e.target.value})}
+                    className="w-full p-2 border rounded focus:ring-2 focus:ring-green-500 outline-none" 
+                    placeholder="Ej: Laptop HP"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Marca</label>
+                  <input 
+                    type="text" 
+                    value={newAsset.brand || ''} 
+                    onChange={e => setNewAsset({...newAsset, brand: e.target.value})}
+                    className="w-full p-2 border rounded focus:ring-2 focus:ring-green-500 outline-none" 
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Modelo</label>
+                  <input 
+                    type="text" 
+                    value={newAsset.model || ''} 
+                    onChange={e => setNewAsset({...newAsset, model: e.target.value})}
+                    className="w-full p-2 border rounded focus:ring-2 focus:ring-green-500 outline-none" 
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Ubicación Inicial</label>
+                  <input 
+                    type="text" 
+                    value={newAsset.location || ''} 
+                    onChange={e => setNewAsset({...newAsset, location: e.target.value})}
+                    className="w-full p-2 border rounded focus:ring-2 focus:ring-green-500 outline-none" 
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Estado</label>
+                  <select 
+                    value={newAsset.status}
+                    onChange={e => setNewAsset({...newAsset, status: e.target.value as AssetStatus})}
+                    className="w-full p-2 border rounded focus:ring-2 focus:ring-green-500 outline-none"
+                  >
+                    <option value="Bueno">Bueno</option>
+                    <option value="Regular">Regular</option>
+                    <option value="Malo">Malo</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div className="flex justify-end gap-3 pt-4 border-t mt-4">
+                <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded">Cancelar</button>
+                <button type="submit" className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 font-bold">Guardar Activo</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
