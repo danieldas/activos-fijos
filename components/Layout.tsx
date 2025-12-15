@@ -20,6 +20,7 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { ViewState } from '../types';
+import { useData } from '../context/DataContext';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -31,6 +32,7 @@ interface LayoutProps {
 }
 
 export const Layout: React.FC<LayoutProps> = ({ children, currentView, onNavigate, onLogout, onSearch, onScan }) => {
+  const { notifications, markNotificationRead } = useData();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMovementsOpen, setIsMovementsOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
@@ -43,6 +45,8 @@ export const Layout: React.FC<LayoutProps> = ({ children, currentView, onNavigat
       onSearch(searchInput);
     }
   };
+
+  const unreadCount = notifications.filter(n => !n.read).length;
 
   const navItemClass = (view: ViewState) => `
     flex items-center px-6 py-3 text-gray-300 hover:bg-blue-800 hover:text-white transition-colors cursor-pointer
@@ -180,7 +184,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, currentView, onNavigat
                 className={`relative p-2 transition-colors ${isNotificationsOpen ? 'text-green-600 bg-green-50 rounded-full' : 'text-gray-500 hover:text-green-600'}`}
               >
                 <Bell size={20} />
-                <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                {unreadCount > 0 && <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>}
               </button>
               
               {isNotificationsOpen && (
@@ -190,47 +194,31 @@ export const Layout: React.FC<LayoutProps> = ({ children, currentView, onNavigat
                     <span className="text-xs text-green-600 font-medium cursor-pointer">Marcar leídas</span>
                   </div>
                   <div className="max-h-96 overflow-y-auto">
-                    <div className="p-3 border-b border-gray-100 hover:bg-blue-50 cursor-pointer transition-colors">
-                      <div className="flex items-start gap-3">
-                        <div className="bg-blue-100 p-2 rounded-full text-blue-600 mt-1">
-                          <Truck size={14} />
+                    {notifications.length > 0 ? (
+                      notifications.map(note => (
+                        <div 
+                          key={note.id} 
+                          onClick={() => markNotificationRead(note.id)}
+                          className={`p-3 border-b border-gray-100 cursor-pointer transition-colors ${note.read ? 'bg-white' : 'bg-blue-50 hover:bg-blue-100'}`}
+                        >
+                          <div className="flex items-start gap-3">
+                            <div className={`p-2 rounded-full mt-1 ${
+                              note.type === 'movement' ? 'bg-blue-100 text-blue-600' :
+                              note.type === 'alert' ? 'bg-orange-100 text-orange-600' : 'bg-green-100 text-green-600'
+                            }`}>
+                              {note.type === 'movement' ? <Truck size={14} /> : note.type === 'alert' ? <Activity size={14}/> : <User size={14} />}
+                            </div>
+                            <div>
+                              <p className={`text-sm font-semibold text-gray-800 ${!note.read && 'font-bold'}`}>{note.title}</p>
+                              <p className="text-xs text-gray-500 mt-0.5">{note.message}</p>
+                              <p className="text-[10px] text-gray-400 mt-1">{note.time}</p>
+                            </div>
+                          </div>
                         </div>
-                        <div>
-                          <p className="text-sm font-semibold text-gray-800">Traslado Detectado</p>
-                          <p className="text-xs text-gray-500 mt-0.5">El activo <span className="font-medium">Proyector Epson</span> cambió de ubicación a Aula 402.</p>
-                          <p className="text-[10px] text-gray-400 mt-1">Hace 5 min</p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="p-3 border-b border-gray-100 hover:bg-green-50 cursor-pointer transition-colors">
-                      <div className="flex items-start gap-3">
-                        <div className="bg-green-100 p-2 rounded-full text-green-600 mt-1">
-                          <User size={14} />
-                        </div>
-                        <div>
-                          <p className="text-sm font-semibold text-gray-800">Cambio de Custodio</p>
-                          <p className="text-xs text-gray-500 mt-0.5">Laptop Dell asignada a <span className="font-medium">Juan Pérez</span>.</p>
-                          <p className="text-[10px] text-gray-400 mt-1">Hace 2 horas</p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="p-3 border-b border-gray-100 hover:bg-orange-50 cursor-pointer transition-colors">
-                      <div className="flex items-start gap-3">
-                        <div className="bg-orange-100 p-2 rounded-full text-orange-600 mt-1">
-                          <ClipboardCheck size={14} />
-                        </div>
-                        <div>
-                          <p className="text-sm font-semibold text-gray-800">Auditoría Requerida</p>
-                          <p className="text-xs text-gray-500 mt-0.5">3 activos en "Lab. Química" no verificados.</p>
-                          <p className="text-[10px] text-gray-400 mt-1">Hace 1 día</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="p-2 text-center border-t border-gray-100">
-                    <button className="text-xs font-medium text-gray-500 hover:text-green-600 flex items-center justify-center gap-1 w-full">
-                      Ver todas <ArrowRight size={12}/>
-                    </button>
+                      ))
+                    ) : (
+                      <div className="p-4 text-center text-sm text-gray-400">Sin notificaciones</div>
+                    )}
                   </div>
                 </div>
               )}
