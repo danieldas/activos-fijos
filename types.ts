@@ -40,4 +40,5 @@ export type ViewState =
   | 'audit' 
   | 'locations' 
   | 'reports' 
-  | 'settings';
+  | 'settings'
+  | 'qr-scanner';
