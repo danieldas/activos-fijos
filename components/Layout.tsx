@@ -14,7 +14,10 @@ import {
   User,
   ChevronDown,
   LogOut,
-  Activity
+  Activity,
+  ScanLine,
+  Truck,
+  ArrowRight
 } from 'lucide-react';
 import { ViewState } from '../types';
 
@@ -24,11 +27,13 @@ interface LayoutProps {
   onNavigate: (view: ViewState) => void;
   onLogout: () => void;
   onSearch: (term: string) => void;
+  onScan: () => void;
 }
 
-export const Layout: React.FC<LayoutProps> = ({ children, currentView, onNavigate, onLogout, onSearch }) => {
+export const Layout: React.FC<LayoutProps> = ({ children, currentView, onNavigate, onLogout, onSearch, onScan }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMovementsOpen, setIsMovementsOpen] = useState(false);
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [searchInput, setSearchInput] = useState('');
 
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -137,6 +142,14 @@ export const Layout: React.FC<LayoutProps> = ({ children, currentView, onNavigat
               <Menu size={24} />
             </button>
             
+            <button 
+              onClick={onScan}
+              className="lg:hidden ml-2 p-2 text-gray-600 hover:text-green-600 hover:bg-green-50 rounded-md transition-colors"
+              title="Escanear QR"
+            >
+              <ScanLine size={24} />
+            </button>
+
             <div className="hidden md:flex ml-4 relative w-96">
               <input 
                 type="text" 
@@ -148,13 +161,81 @@ export const Layout: React.FC<LayoutProps> = ({ children, currentView, onNavigat
               />
               <Search className="absolute left-3 top-2.5 text-gray-400" size={18} />
             </div>
+            
+            {/* Desktop Scan Button Shortcut */}
+            <button 
+              onClick={onScan}
+              className="hidden md:flex ml-3 items-center gap-2 text-sm text-gray-500 hover:text-green-600 px-3 py-1.5 rounded-full hover:bg-green-50 transition-colors border border-transparent hover:border-green-200"
+            >
+              <ScanLine size={18} />
+              <span>Escanear</span>
+            </button>
           </div>
 
           <div className="flex items-center gap-4">
-            <button className="relative p-2 text-gray-500 hover:text-green-600 transition-colors">
-              <Bell size={20} />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-            </button>
+            {/* Notifications Dropdown */}
+            <div className="relative">
+              <button 
+                onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
+                className={`relative p-2 transition-colors ${isNotificationsOpen ? 'text-green-600 bg-green-50 rounded-full' : 'text-gray-500 hover:text-green-600'}`}
+              >
+                <Bell size={20} />
+                <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+              </button>
+              
+              {isNotificationsOpen && (
+                <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl border border-gray-100 z-50 overflow-hidden">
+                  <div className="p-3 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
+                    <span className="text-sm font-bold text-gray-700">Notificaciones</span>
+                    <span className="text-xs text-green-600 font-medium cursor-pointer">Marcar leídas</span>
+                  </div>
+                  <div className="max-h-96 overflow-y-auto">
+                    <div className="p-3 border-b border-gray-100 hover:bg-blue-50 cursor-pointer transition-colors">
+                      <div className="flex items-start gap-3">
+                        <div className="bg-blue-100 p-2 rounded-full text-blue-600 mt-1">
+                          <Truck size={14} />
+                        </div>
+                        <div>
+                          <p className="text-sm font-semibold text-gray-800">Traslado Detectado</p>
+                          <p className="text-xs text-gray-500 mt-0.5">El activo <span className="font-medium">Proyector Epson</span> cambió de ubicación a Aula 402.</p>
+                          <p className="text-[10px] text-gray-400 mt-1">Hace 5 min</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="p-3 border-b border-gray-100 hover:bg-green-50 cursor-pointer transition-colors">
+                      <div className="flex items-start gap-3">
+                        <div className="bg-green-100 p-2 rounded-full text-green-600 mt-1">
+                          <User size={14} />
+                        </div>
+                        <div>
+                          <p className="text-sm font-semibold text-gray-800">Cambio de Custodio</p>
+                          <p className="text-xs text-gray-500 mt-0.5">Laptop Dell asignada a <span className="font-medium">Juan Pérez</span>.</p>
+                          <p className="text-[10px] text-gray-400 mt-1">Hace 2 horas</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="p-3 border-b border-gray-100 hover:bg-orange-50 cursor-pointer transition-colors">
+                      <div className="flex items-start gap-3">
+                        <div className="bg-orange-100 p-2 rounded-full text-orange-600 mt-1">
+                          <ClipboardCheck size={14} />
+                        </div>
+                        <div>
+                          <p className="text-sm font-semibold text-gray-800">Auditoría Requerida</p>
+                          <p className="text-xs text-gray-500 mt-0.5">3 activos en "Lab. Química" no verificados.</p>
+                          <p className="text-[10px] text-gray-400 mt-1">Hace 1 día</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="p-2 text-center border-t border-gray-100">
+                    <button className="text-xs font-medium text-gray-500 hover:text-green-600 flex items-center justify-center gap-1 w-full">
+                      Ver todas <ArrowRight size={12}/>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
             <div className="flex items-center gap-3 border-l pl-4 border-gray-200">
               <div className="text-right hidden sm:block">
                 <p className="text-sm font-semibold text-gray-800">Carlos Admin</p>
