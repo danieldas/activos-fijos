@@ -21,7 +21,7 @@ export const AssetDetail: React.FC<AssetDetailProps> = ({ asset, onBack }) => {
     <div className="space-y-6">
       <button 
         onClick={onBack}
-        className="flex items-center text-gray-500 hover:text-[#D32F2F] transition-colors"
+        className="flex items-center text-gray-500 hover:text-green-600 transition-colors"
       >
         <ArrowLeft size={18} className="mr-2" /> Volver al listado
       </button>
@@ -59,7 +59,7 @@ export const AssetDetail: React.FC<AssetDetailProps> = ({ asset, onBack }) => {
                     className={`
                       py-4 px-6 font-medium text-sm border-b-2 transition-colors
                       ${activeTab === tab 
-                        ? 'border-[#D32F2F] text-[#D32F2F]' 
+                        ? 'border-green-500 text-green-600' 
                         : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}
                     `}
                   >
