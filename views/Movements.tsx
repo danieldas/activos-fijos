@@ -16,7 +16,7 @@ export const Movements: React.FC = () => {
               <input 
                 type="text" 
                 placeholder="Buscar por código o nombre..." 
-                className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#D32F2F] focus:border-transparent outline-none"
+                className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none"
               />
               <Search className="absolute left-3 top-3.5 text-gray-400" size={20} />
             </div>
@@ -30,7 +30,7 @@ export const Movements: React.FC = () => {
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Campus / Sede</label>
-                <select className="w-full p-2.5 bg-white border border-gray-300 rounded-md focus:ring-[#D32F2F] focus:border-[#D32F2F]">
+                <select className="w-full p-2.5 bg-white border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500">
                   <option>Campus Central</option>
                   <option>Campus Agronomía</option>
                   <option>Medicina</option>
@@ -39,7 +39,7 @@ export const Movements: React.FC = () => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Bloque</label>
-                <select className="w-full p-2.5 bg-white border border-gray-300 rounded-md focus:ring-[#D32F2F] focus:border-[#D32F2F]">
+                <select className="w-full p-2.5 bg-white border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500">
                   <option>Bloque Tecnológico</option>
                   <option>Bloque Administrativo</option>
                 </select>
@@ -47,7 +47,7 @@ export const Movements: React.FC = () => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Ambiente</label>
-                <select className="w-full p-2.5 bg-white border border-gray-300 rounded-md focus:ring-[#D32F2F] focus:border-[#D32F2F]">
+                <select className="w-full p-2.5 bg-white border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500">
                   <option>Aula 402</option>
                   <option>Laboratorio 1</option>
                   <option>Oficina 101</option>
@@ -61,7 +61,7 @@ export const Movements: React.FC = () => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Nuevo Responsable</label>
-                <select className="w-full p-2.5 bg-white border border-gray-300 rounded-md focus:ring-[#D32F2F] focus:border-[#D32F2F]">
+                <select className="w-full p-2.5 bg-white border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500">
                   <option>Seleccionar personal...</option>
                   <option>Juan Pérez</option>
                   <option>Ana García</option>
@@ -88,7 +88,7 @@ export const Movements: React.FC = () => {
             <label className="block text-sm font-medium text-gray-700 mb-1">Observaciones</label>
             <textarea 
               rows={3} 
-              className="w-full p-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-[#D32F2F] outline-none"
+              className="w-full p-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-green-500 outline-none"
               placeholder="Detalles adicionales sobre el estado del activo o motivo del traslado..."
             ></textarea>
           </div>
@@ -97,7 +97,7 @@ export const Movements: React.FC = () => {
             <button type="button" className="px-6 py-2.5 bg-gray-200 text-gray-700 rounded-md font-medium hover:bg-gray-300 transition-colors">
               Cancelar
             </button>
-            <button type="button" className="px-6 py-2.5 bg-[#D32F2F] text-white rounded-md font-medium hover:bg-red-800 shadow-md transition-colors">
+            <button type="button" className="px-6 py-2.5 bg-green-600 text-white rounded-md font-medium hover:bg-green-700 shadow-md transition-colors">
               Registrar Movimiento
             </button>
           </div>
