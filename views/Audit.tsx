@@ -6,7 +6,12 @@ import {
   MoreVertical
 } from 'lucide-react';
 
-const auditItems = [
+interface AuditProps {
+  onScanRequest: () => void;
+  verifiedCodes?: string[];
+}
+
+const initialAuditItems = [
   { id: 1, code: 'UMSS-00123', name: 'Proyector Epson X41', scanned: true },
   { id: 2, code: 'UMSS-00125', name: 'Laptop Dell Inspiron', scanned: true },
   { id: 3, code: 'UMSS-00126', name: 'Pizarra Acrílica', scanned: false },
@@ -15,7 +20,18 @@ const auditItems = [
   { id: 6, code: 'UMSS-00130', name: 'CPU HP ProDesk', scanned: false },
 ];
 
-export const Audit: React.FC = () => {
+export const Audit: React.FC<AuditProps> = ({ onScanRequest, verifiedCodes = [] }) => {
+  
+  // Merge verified codes with initial state
+  const auditItems = initialAuditItems.map(item => ({
+    ...item,
+    scanned: item.scanned || verifiedCodes.includes(item.code)
+  }));
+
+  const verifiedCount = auditItems.filter(i => i.scanned).length;
+  const totalCount = auditItems.length;
+  const progress = (verifiedCount / totalCount) * 100;
+
   return (
     <div className="max-w-2xl mx-auto space-y-4">
       {/* Header for Mobile Context */}
@@ -28,10 +44,10 @@ export const Audit: React.FC = () => {
       <div className="bg-white p-4 rounded-lg shadow-sm">
         <div className="flex justify-between items-center mb-2">
           <span className="text-sm font-semibold text-gray-700">Progreso</span>
-          <span className="text-sm font-bold text-[#D32F2F]">2/6 Verificados</span>
+          <span className="text-sm font-bold text-green-600">{verifiedCount}/{totalCount} Verificados</span>
         </div>
         <div className="w-full bg-gray-200 rounded-full h-3">
-          <div className="bg-[#D32F2F] h-3 rounded-full transition-all duration-500" style={{ width: '33%' }}></div>
+          <div className="bg-green-600 h-3 rounded-full transition-all duration-500" style={{ width: `${progress}%` }}></div>
         </div>
       </div>
 
@@ -67,7 +83,10 @@ export const Audit: React.FC = () => {
 
       {/* Floating Action Button (FAB) */}
       <div className="fixed bottom-6 right-6 md:bottom-10 md:right-10 z-20">
-        <button className="bg-[#D32F2F] text-white p-4 rounded-full shadow-lg hover:bg-red-800 hover:scale-105 transition-all flex items-center justify-center">
+        <button 
+          onClick={onScanRequest}
+          className="bg-green-600 text-white p-4 rounded-full shadow-lg hover:bg-green-700 hover:scale-105 transition-all flex items-center justify-center ring-4 ring-green-100"
+        >
           <ScanLine size={32} />
         </button>
       </div>
