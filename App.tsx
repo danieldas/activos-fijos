@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { DataProvider } from './context/DataContext';
 import { Layout } from './components/Layout';
 import { Login } from './views/Login';
 import { Dashboard } from './views/Dashboard';
@@ -11,23 +12,20 @@ import { Reports } from './views/Reports';
 import { QRScanner } from './views/QRScanner';
 import { Asset, ViewState } from './types';
 
-function App() {
+function AppContent() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentView, setCurrentView] = useState<ViewState>('dashboard');
-  const [lastView, setLastView] = useState<ViewState>('dashboard'); // Track history for back button
+  const [lastView, setLastView] = useState<ViewState>('dashboard');
   const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
   const [globalSearchTerm, setGlobalSearchTerm] = useState('');
-  
-  // State to track assets verified by QR scan
   const [verifiedAssets, setVerifiedAssets] = useState<string[]>([]);
 
   const handleNavigate = (view: ViewState) => {
-    setLastView(currentView); // Save current view before navigating
+    setLastView(currentView);
     setCurrentView(view);
     if (view !== 'asset-detail') {
       setSelectedAsset(null);
     }
-    // Clear search term when navigating via menu
     if (view !== 'assets') {
       setGlobalSearchTerm('');
     }
@@ -61,13 +59,9 @@ function App() {
   };
 
   const handleScanComplete = (code: string) => {
-    // Add code to verified list if not already present
     if (!verifiedAssets.includes(code)) {
       setVerifiedAssets(prev => [...prev, code]);
     }
-    // After scanning, it usually makes sense to see the Audit list to confirm verification
-    // Or if we came from somewhere else, maybe just go back there?
-    // For this use case (Inventory), going to Audit is the most logical flow.
     setCurrentView('audit');
   };
 
@@ -117,8 +111,6 @@ function App() {
     return <Login onLogin={handleLogin} />;
   }
 
-  // If viewing QR Scanner, we might want to hide the layout sidebar/header for full immersion
-  // or keep it. Let's keep it consistent but overlay handled inside component.
   if (currentView === 'qr-scanner') {
       return <QRScanner onBack={() => setCurrentView(lastView)} onScanComplete={handleScanComplete} />;
   }
@@ -136,4 +128,10 @@ function App() {
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <DataProvider>
+      <AppContent />
+    </DataProvider>
+  );
+}
