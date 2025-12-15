@@ -8,6 +8,7 @@ import { Movements } from './views/Movements';
 import { Audit } from './views/Audit';
 import { Locations } from './views/Locations';
 import { Reports } from './views/Reports';
+import { QRScanner } from './views/QRScanner';
 import { Asset, ViewState } from './types';
 
 function App() {
@@ -15,6 +16,9 @@ function App() {
   const [currentView, setCurrentView] = useState<ViewState>('dashboard');
   const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
   const [globalSearchTerm, setGlobalSearchTerm] = useState('');
+  
+  // State to track assets verified by QR scan
+  const [verifiedAssets, setVerifiedAssets] = useState<string[]>([]);
 
   const handleNavigate = (view: ViewState) => {
     setCurrentView(view);
@@ -44,6 +48,16 @@ function App() {
   const handleLogout = () => {
     setIsAuthenticated(false);
     setCurrentView('dashboard');
+    setVerifiedAssets([]);
+  };
+
+  const handleScanComplete = (code: string) => {
+    // Add code to verified list if not already present
+    if (!verifiedAssets.includes(code)) {
+      setVerifiedAssets(prev => [...prev, code]);
+    }
+    // Navigate back to Audit view
+    setCurrentView('audit');
   };
 
   const renderContent = () => {
@@ -64,7 +78,15 @@ function App() {
       case 'movements':
         return <Movements />;
       case 'audit':
-        return <Audit />;
+        return <Audit 
+          onScanRequest={() => setCurrentView('qr-scanner')} 
+          verifiedCodes={verifiedAssets}
+        />;
+      case 'qr-scanner':
+        return <QRScanner 
+          onBack={() => setCurrentView('audit')} 
+          onScanComplete={handleScanComplete}
+        />;
       case 'locations':
         return <Locations />;
       case 'reports':
@@ -82,6 +104,12 @@ function App() {
 
   if (!isAuthenticated) {
     return <Login onLogin={handleLogin} />;
+  }
+
+  // If viewing QR Scanner, we might want to hide the layout sidebar/header for full immersion
+  // or keep it. Let's keep it consistent but overlay handled inside component.
+  if (currentView === 'qr-scanner') {
+      return <QRScanner onBack={() => setCurrentView('audit')} onScanComplete={handleScanComplete} />;
   }
 
   return (
