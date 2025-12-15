@@ -51,13 +51,13 @@ export const AssetList: React.FC<AssetListProps> = ({ onSelectAsset, externalSea
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <h2 className="text-2xl font-bold text-gray-800">Inventario de Activos</h2>
         <div className="flex gap-2">
-          <button className="flex items-center gap-2 bg-[#D32F2F] text-white px-4 py-2 rounded-md shadow-sm hover:bg-red-800 transition-colors">
+          <button className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-md shadow-sm hover:bg-green-700 transition-colors">
             <Plus size={18} /> Nuevo Activo
           </button>
-          <button className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-md shadow-sm hover:bg-green-700 transition-colors">
+          <button className="flex items-center gap-2 bg-gray-600 text-white px-4 py-2 rounded-md shadow-sm hover:bg-gray-700 transition-colors">
             <Download size={18} /> Exportar
           </button>
-          <button className="flex items-center gap-2 bg-gray-600 text-white px-4 py-2 rounded-md shadow-sm hover:bg-gray-700 transition-colors">
+          <button className="flex items-center gap-2 bg-white text-gray-700 border border-gray-300 px-4 py-2 rounded-md shadow-sm hover:bg-gray-50 transition-colors">
             <Printer size={18} /> Etiquetas
           </button>
         </div>
@@ -72,7 +72,7 @@ export const AssetList: React.FC<AssetListProps> = ({ onSelectAsset, externalSea
               placeholder="Buscar por código o descripción..." 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-white border border-gray-300 rounded-md focus:ring-2 focus:ring-[#D32F2F] focus:border-transparent outline-none transition-all text-sm"
+              className="w-full pl-10 pr-4 py-2 bg-white border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all text-sm"
             />
             <Search className="absolute left-3 top-2.5 text-gray-400" size={18} />
           </div>
