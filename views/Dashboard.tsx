@@ -7,22 +7,21 @@ import {
 } from 'lucide-react';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { StatCard } from '../components/StatCard';
-import { Movement } from '../types';
-
-const data = [
-  { name: 'Bueno', value: 400, color: '#198754' }, // Bootstrap Success Green
-  { name: 'Regular', value: 300, color: '#ffc107' }, // Bootstrap Warning Yellow
-  { name: 'Malo', value: 100, color: '#dc3545' }, // Bootstrap Danger Red
-];
-
-const recentMovements: Movement[] = [
-  { id: '1', assetName: 'Proyector Epson X41', origin: 'Almacén Central', destination: 'Aula 402 - Bloque B', date: '2023-10-25', type: 'Asignación' },
-  { id: '2', assetName: 'Laptop Dell Inspiron', origin: 'Lab. Computación', destination: 'Soporte Técnico', date: '2023-10-24', type: 'Traslado' },
-  { id: '3', assetName: 'Escritorio Madera', origin: 'Oficina Decano', destination: 'Depósito', date: '2023-10-23', type: 'Baja' },
-  { id: '4', assetName: 'Microscopio Zeiss', origin: 'Lab. Biología', destination: 'Lab. Química', date: '2023-10-22', type: 'Traslado' },
-];
+import { useData } from '../context/DataContext';
 
 export const Dashboard: React.FC = () => {
+  const { assets, movements } = useData();
+
+  const goodCount = assets.filter(a => a.status === 'Bueno').length;
+  const regularCount = assets.filter(a => a.status === 'Regular').length;
+  const badCount = assets.filter(a => a.status === 'Malo').length;
+
+  const data = [
+    { name: 'Bueno', value: goodCount, color: '#198754' }, 
+    { name: 'Regular', value: regularCount, color: '#ffc107' },
+    { name: 'Malo', value: badCount, color: '#dc3545' },
+  ];
+
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold text-gray-800">Dashboard General</h2>
@@ -31,7 +30,7 @@ export const Dashboard: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard 
           title="Total Activos" 
-          value="12,450" 
+          value={assets.length.toLocaleString()} 
           icon={Package} 
           borderColorClass="border-[#0D47A1]" 
         />
@@ -43,7 +42,7 @@ export const Dashboard: React.FC = () => {
         />
         <StatCard 
           title="Pendientes Revisión" 
-          value="24" 
+          value={badCount.toString()} 
           icon={AlertTriangle} 
           borderColorClass="border-[#D32F2F]"
           subtext={<span className="text-xs text-[#D32F2F] font-semibold">Acción requerida</span>}
@@ -79,7 +78,7 @@ export const Dashboard: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {recentMovements.map((mov) => (
+                {movements.slice(0, 5).map((mov) => (
                   <tr key={mov.id} className="hover:bg-gray-50">
                     <td className="px-4 py-3 font-medium text-gray-800">{mov.assetName}</td>
                     <td className="px-4 py-3 text-gray-500">{mov.origin}</td>
