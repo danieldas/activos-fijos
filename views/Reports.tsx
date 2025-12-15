@@ -25,7 +25,7 @@ export const Reports: React.FC = () => {
           <h2 className="text-2xl font-bold text-gray-800">Centro de Reportes</h2>
           <p className="text-gray-500 text-sm">Genera, visualiza y descarga reportes del estado de activos.</p>
         </div>
-        <button className="flex items-center gap-2 bg-[#D32F2F] text-white px-4 py-2 rounded-md shadow-sm hover:bg-red-800 transition-colors">
+        <button className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-md shadow-sm hover:bg-green-700 transition-colors">
           <FileText size={18} /> Nuevo Reporte Personalizado
         </button>
       </div>
@@ -99,7 +99,7 @@ export const Reports: React.FC = () => {
           <form className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Tipo de Reporte</label>
-              <select className="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-md focus:ring-[#D32F2F] focus:border-[#D32F2F] text-sm">
+              <select className="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500 text-sm">
                 <option>Inventario Detallado</option>
                 <option>Resumen por Responsable</option>
                 <option>Activos por Ubicación</option>
@@ -111,13 +111,13 @@ export const Reports: React.FC = () => {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Desde</label>
                 <div className="relative">
-                  <input type="date" className="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-md focus:ring-[#D32F2F] text-sm" />
+                  <input type="date" className="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-md focus:ring-green-500 text-sm" />
                 </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Hasta</label>
                 <div className="relative">
-                  <input type="date" className="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-md focus:ring-[#D32F2F] text-sm" />
+                  <input type="date" className="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-md focus:ring-green-500 text-sm" />
                 </div>
               </div>
             </div>
@@ -126,11 +126,11 @@ export const Reports: React.FC = () => {
               <label className="block text-sm font-medium text-gray-700 mb-2">Formato de Salida</label>
               <div className="flex gap-4">
                 <label className="flex items-center gap-2 cursor-pointer">
-                  <input type="radio" name="format" className="text-[#D32F2F] focus:ring-[#D32F2F]" defaultChecked />
+                  <input type="radio" name="format" className="text-green-600 focus:ring-green-500" defaultChecked />
                   <span className="text-sm text-gray-700">PDF Documento</span>
                 </label>
                 <label className="flex items-center gap-2 cursor-pointer">
-                  <input type="radio" name="format" className="text-[#D32F2F] focus:ring-[#D32F2F]" />
+                  <input type="radio" name="format" className="text-green-600 focus:ring-green-500" />
                   <span className="text-sm text-gray-700">Excel (.xlsx)</span>
                 </label>
               </div>
@@ -173,7 +173,7 @@ export const Reports: React.FC = () => {
                     <td className="px-4 py-3">{report.date}</td>
                     <td className="px-4 py-3">{report.user}</td>
                     <td className="px-4 py-3 text-right">
-                      <button className="text-[#0D47A1] hover:text-[#D32F2F] hover:underline font-medium text-sm">
+                      <button className="text-[#0D47A1] hover:text-green-600 hover:underline font-medium text-sm">
                         Descargar
                       </button>
                     </td>
