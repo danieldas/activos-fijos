@@ -13,7 +13,8 @@ import {
   X,
   User,
   ChevronDown,
-  LogOut
+  LogOut,
+  Activity
 } from 'lucide-react';
 import { ViewState } from '../types';
 
@@ -40,17 +41,17 @@ export const Layout: React.FC<LayoutProps> = ({ children, currentView, onNavigat
 
   const navItemClass = (view: ViewState) => `
     flex items-center px-6 py-3 text-gray-300 hover:bg-blue-800 hover:text-white transition-colors cursor-pointer
-    ${currentView === view ? 'bg-blue-800 text-white border-r-4 border-[#D32F2F]' : ''}
+    ${currentView === view ? 'bg-blue-800 text-white border-r-4 border-green-500' : ''}
   `;
 
   const SidebarContent = () => (
     <>
       <div className="p-6 flex items-center justify-center border-b border-blue-800">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center text-[#0D47A1] font-bold">
-            U
+          <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white font-bold shadow-lg">
+            <Activity size={20} />
           </div>
-          <h1 className="text-xl font-bold text-white tracking-wide">UMSS Activos</h1>
+          <h1 className="text-xl font-bold text-white tracking-wide">Activa360</h1>
         </div>
       </div>
 
@@ -143,16 +144,16 @@ export const Layout: React.FC<LayoutProps> = ({ children, currentView, onNavigat
                 onChange={(e) => setSearchInput(e.target.value)}
                 onKeyDown={handleSearchKeyDown}
                 placeholder="Buscar por código, serie o nombre..." 
-                className="w-full pl-10 pr-4 py-2 bg-gray-100 border-none rounded-full focus:ring-2 focus:ring-[#D32F2F] focus:bg-white transition-all text-sm"
+                className="w-full pl-10 pr-4 py-2 bg-gray-100 border-none rounded-full focus:ring-2 focus:ring-green-500 focus:bg-white transition-all text-sm"
               />
               <Search className="absolute left-3 top-2.5 text-gray-400" size={18} />
             </div>
           </div>
 
           <div className="flex items-center gap-4">
-            <button className="relative p-2 text-gray-500 hover:text-[#D32F2F] transition-colors">
+            <button className="relative p-2 text-gray-500 hover:text-green-600 transition-colors">
               <Bell size={20} />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-[#D32F2F] rounded-full"></span>
+              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
             </button>
             <div className="flex items-center gap-3 border-l pl-4 border-gray-200">
               <div className="text-right hidden sm:block">
@@ -164,7 +165,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, currentView, onNavigat
               </div>
               <button 
                 onClick={onLogout}
-                className="p-2 text-gray-500 hover:text-[#D32F2F] hover:bg-red-50 rounded-full transition-colors ml-1"
+                className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors ml-1"
                 title="Cerrar Sesión"
               >
                 <LogOut size={20} />
